@@ -1,0 +1,35 @@
+{
+  "type": "record",
+  "namespace": "com.example.library.loan",
+  "name": "BookLoaned",
+  "fields": [
+    {
+      "name": "occurred_at",
+      "type": "string"
+    },
+    {
+      "name": "loan_id",
+      "type": "string"
+    },
+    {
+      "name": "library_id",
+      "type": "string"
+    },
+    {
+      "name": "book_id",
+      "type": "string"
+    },
+    {
+      "name": "member_id",
+      "type": "string"
+    },
+    {
+      "name": "loan_starting_at",
+      "type": "string"
+    },
+    {
+      "name": "loan_ending_at",
+      "type": "string"
+    }
+  ]
+}
