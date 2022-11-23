@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class InMemoryLoansRepository implements LoansRepository {
+class InMemoryLoansRepository implements LoansRepository {
 
     private final Set<Loan> loans = new TreeSet<>();
 

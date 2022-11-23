@@ -1,5 +1,26 @@
-spring.jackson:
-  property-naming-strategy: SNAKE_CASE
+management:
+  health:
+    probes.enabled: true
+    diskspace.enabled: false
+    livenessstate.enabled: true
+    readinessstate.enabled: true
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  kafka:
+    bootstrap-servers: http://localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://localhost:9081
+        auto.register.schemas: true
+        use.latest.version: true
+        enable.idempotence: true
+        acks: all
+        value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+    client-id: library-loan
 
 logging.level:
   org.springframework.web: ERROR

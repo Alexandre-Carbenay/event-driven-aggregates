@@ -22,8 +22,17 @@ repositories {
 	}
 }
 
+sourceSets {
+	main {
+		java {
+			srcDir generateAvroJava
+		}
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.apache.avro:avro:1.11.0'
 	implementation 'io.confluent:kafka-avro-serializer:7.2.2'
@@ -39,4 +48,8 @@ avro {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootJar {
+	archiveFileName = "${rootProject.name}.jar"
 }

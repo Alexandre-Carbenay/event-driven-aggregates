@@ -9,8 +9,10 @@ import lombok.experimental.Accessors;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Optional;
 
-import static com.example.library.loan.loans.LoanStatus.*;
+import static com.example.library.loan.loans.LoanStatus.ACTIVE;
+import static com.example.library.loan.loans.LoanStatus.RETURNED;
 
 @Data
 @Accessors(fluent = true)
@@ -66,28 +68,28 @@ public class Loan implements Comparable<Loan> {
         return ACTIVE.equals(status);
     }
 
-    public void returnIt() {
+    public Optional<LocalDate> returnedAt() {
+        return Optional.ofNullable(returnedAt);
+    }
+
+    public LoanReturned returnIt() {
         if (!isActive()) {
             throw new InactiveLoanException(library, member, id);
         }
         updatedAt = LocalDateTime.now();
         returnedAt = updatedAt.toLocalDate();
         status = RETURNED;
+        return LoanReturned.from(this);
     }
 
-    public void extend() {
+    public LoanExtended extend() {
         if (!isActive()) {
             throw new InactiveLoanException(library, member, id);
         }
+        var originalReturnBefore = returnBefore;
         returnBefore = calculateExpectedReturnDate(returnBefore);
         updatedAt = LocalDateTime.now();
-    }
-
-    public void cancel() {
-        if (!isActive()) {
-            throw new InactiveLoanException(library, member, id);
-        }
-        status = CANCELED;
+        return LoanExtended.from(this, originalReturnBefore);
     }
 
     @Override

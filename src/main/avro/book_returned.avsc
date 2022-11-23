@@ -28,7 +28,11 @@
       "type": "string"
     },
     {
-      "name": "loan_ending_at",
+      "name": "loan_originally_ending_at",
+      "type": "string"
+    },
+    {
+      "name": "loan_effectively_ending_at",
       "type": "string"
     }
   ]

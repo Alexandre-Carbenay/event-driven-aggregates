@@ -3,7 +3,6 @@ package com.example.library.loan.adapters.rest;
 import com.example.library.loan.loans.*;
 import com.example.library.loan.loans.LoansService.LoansQuery;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -14,7 +13,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = "/loans", produces = APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
-public class LoansController {
+class LoansController {
 
     private final LoansService service;
 
@@ -40,12 +39,6 @@ public class LoansController {
     public LoanResource extendLoan(@PathVariable String library, @PathVariable String member, @PathVariable String loan) {
         var extendedLoan = service.extendLoan(new ExtendLoan(LibraryId.of(library), MemberId.of(member), LoanId.of(UUID.fromString(loan))));
         return LoanResource.from(extendedLoan);
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{library}/{member}/{loan}")
-    public void cancelLoan(@PathVariable String library, @PathVariable String member, @PathVariable String loan) {
-        service.cancelLoan(new CancelLoan(LibraryId.of(library), MemberId.of(member), LoanId.of(UUID.fromString(loan))));
     }
 
 }
