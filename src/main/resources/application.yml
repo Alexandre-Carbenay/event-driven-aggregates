@@ -1,1 +1,9 @@
+spring.jackson:
+  property-naming-strategy: SNAKE_CASE
 
+logging.level:
+  org.springframework.web: ERROR
+  org.apache.kafka.clients.producer: DEBUG
+  io.confluent.kafka:
+    serializers: DEBUG
+    schemaregistry.client: DEBUG
