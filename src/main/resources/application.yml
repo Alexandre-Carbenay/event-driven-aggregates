@@ -21,10 +21,18 @@ spring:
         acks: all
         value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
     client-id: library-loan
+    consumer:
+      group-id: reporting
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://localhost:9081
+        specific.avro.reader: true
+        value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
 
 logging.level:
   org.springframework.web: ERROR
-  org.apache.kafka.clients.producer: DEBUG
+  org.apache.kafka.clients.producer: WARN
   io.confluent.kafka:
-    serializers: DEBUG
-    schemaregistry.client: DEBUG
+    serializers: WARN
+    schemaregistry.client: WARN

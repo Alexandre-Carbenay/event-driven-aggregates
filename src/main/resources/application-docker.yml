@@ -4,3 +4,6 @@ spring:
     producer:
       properties:
         schema.registry.url: http://schema-registry:9081
+    consumer:
+      properties:
+        schema.registry.url: http://schema-registry:9081
