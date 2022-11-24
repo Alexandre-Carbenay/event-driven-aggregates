@@ -48,14 +48,14 @@ public class LoanReturnedKafkaPublisher implements EventHandler<LoanReturned> {
                 event.originalReturnBefore().format(ISO_DATE),
                 event.returnAt().format(ISO_DATE)
         );
-        produceToUniqueTopic(eventToPublish);
-        produceToMultipleTopic(eventToPublish);
-    }
-
-    private void produceToUniqueTopic(BookReturned eventToPublish) {
         List<Header> headers = List.of(
                 new RecordHeader("type", "BookReturned".getBytes())
         );
+        produceToUniqueTopic(eventToPublish, headers);
+        produceToMultipleTopic(eventToPublish, headers);
+    }
+
+    private void produceToUniqueTopic(BookReturned eventToPublish, List<Header> headers) {
         var eventRecord = new ProducerRecord<>(
                 LOANS_TOPIC_NAME,
                 null,
@@ -67,13 +67,14 @@ public class LoanReturnedKafkaPublisher implements EventHandler<LoanReturned> {
         uniqueTopicKafkaTemplate.send(eventRecord);
     }
 
-    private void produceToMultipleTopic(BookReturned eventToPublish) {
+    private void produceToMultipleTopic(BookReturned eventToPublish, List<Header> headers) {
         var eventRecord = new ProducerRecord<>(
                 RETURNED_LOANS_TOPIC_NAME,
                 null,
                 Instant.now().toEpochMilli(),
                 eventToPublish.getLoanId(),
-                eventToPublish
+                eventToPublish,
+                headers
         );
         multipleTopicsKafkaTemplate.send(eventRecord);
     }
