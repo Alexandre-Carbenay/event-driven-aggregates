@@ -5,7 +5,7 @@ import com.example.library.loan.loans.Loan;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-record LoanResource(
+public record LoanResource(
         String id,
         String library,
         String member,

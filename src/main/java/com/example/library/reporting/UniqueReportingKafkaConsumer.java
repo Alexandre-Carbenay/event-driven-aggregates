@@ -10,30 +10,32 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import static com.example.library.reporting.ReportingService.UNIQUE;
+
 @Slf4j
 @Component
 @KafkaListener(groupId = "reporting", topics = "loans")
 @RequiredArgsConstructor
-public class ReportingKafkaConsumer {
+public class UniqueReportingKafkaConsumer {
 
     private final ReportingService service;
 
     @KafkaHandler
-    public void bookLoaned(@Payload BookLoaned event) {
-        log.info("Book loaned: {}", event);
-        service.bookLoaned(event.getLoanId());
+    public void uniqueBookLoaned(@Payload BookLoaned event) {
+        log.info("[Unique] Book loaned: {}", event);
+        service.bookLoaned(UNIQUE, event.getLoanId());
     }
 
     @KafkaHandler
-    public void bookLoanExtended(@Payload BookLoanExtended event) {
-        log.info("Book loan extended: {}", event);
-        service.bookLoanExtended(event.getLoanId());
+    public void uniqueBookLoanExtended(@Payload BookLoanExtended event) {
+        log.info("[Unique] Book loan extended: {}", event);
+        service.bookLoanExtended(UNIQUE, event.getLoanId());
     }
 
     @KafkaHandler
-    public void bookReturned(@Payload BookReturned event) {
-        log.info("Book returned: {}", event);
-        service.bookReturned(event.getLoanId());
+    public void uniqueBookReturned(@Payload BookReturned event) {
+        log.info("[Unique] Book returned: {}", event);
+        service.bookReturned(UNIQUE, event.getLoanId());
     }
 
 }

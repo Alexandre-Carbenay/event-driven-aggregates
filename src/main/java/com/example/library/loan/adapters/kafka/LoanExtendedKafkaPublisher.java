@@ -1,27 +1,36 @@
 package com.example.library.loan.adapters.kafka;
 
 import com.example.library.loan.BookLoanExtended;
+import com.example.library.loan.BookLoaned;
 import com.example.library.loan.events.EventHandler;
 import com.example.library.loan.loans.LoanExtended;
-import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
 
+import static com.example.library.loan.adapters.kafka.KafkaProducerConfiguration.EXTENDED_LOANS_TOPIC_NAME;
 import static com.example.library.loan.adapters.kafka.KafkaProducerConfiguration.LOANS_TOPIC_NAME;
 import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 
 @Component
-@RequiredArgsConstructor
 public class LoanExtendedKafkaPublisher implements EventHandler<LoanExtended> {
 
-    private final KafkaTemplate<String, BookLoanExtended> kafkaTemplate;
+    private final KafkaTemplate<String, BookLoanExtended> uniqueTopicKafkaTemplate;
+    private final KafkaTemplate<String, BookLoanExtended> multipleTopicsKafkaTemplate;
+
+    public LoanExtendedKafkaPublisher(
+            @Qualifier("uniqueTopicKafkaTemplate") KafkaTemplate<String, BookLoanExtended> uniqueTopicKafkaTemplate,
+            @Qualifier("multipleTopicsKafkaTemplate") KafkaTemplate<String, BookLoanExtended> multipleTopicsKafkaTemplate) {
+        this.uniqueTopicKafkaTemplate = uniqueTopicKafkaTemplate;
+        this.multipleTopicsKafkaTemplate = multipleTopicsKafkaTemplate;
+    }
 
     @Override
     public boolean canHandle(String type) {
@@ -40,6 +49,11 @@ public class LoanExtendedKafkaPublisher implements EventHandler<LoanExtended> {
                 event.originalReturnBefore().format(ISO_DATE),
                 event.currentReturnBefore().format(ISO_DATE)
         );
+        produceToUniqueTopic(eventToPublish);
+        produceToMultipleTopic(eventToPublish);
+    }
+
+    private void produceToUniqueTopic(BookLoanExtended eventToPublish) {
         List<Header> headers = List.of(
                 new RecordHeader("type", "BookLoanExtended".getBytes())
         );
@@ -51,7 +65,18 @@ public class LoanExtendedKafkaPublisher implements EventHandler<LoanExtended> {
                 eventToPublish,
                 headers
         );
-        kafkaTemplate.send(eventRecord);
+        uniqueTopicKafkaTemplate.send(eventRecord);
+    }
+
+    private void produceToMultipleTopic(BookLoanExtended eventToPublish) {
+        var eventRecord = new ProducerRecord<>(
+                EXTENDED_LOANS_TOPIC_NAME,
+                null,
+                Instant.now().toEpochMilli(),
+                eventToPublish.getLoanId(),
+                eventToPublish
+        );
+        multipleTopicsKafkaTemplate.send(eventRecord);
     }
 
 }

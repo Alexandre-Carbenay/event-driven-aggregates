@@ -1,16 +1,24 @@
 package com.example.library.reporting;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.example.library.reporting.Reporting.ReportStatus.*;
 
+@RequiredArgsConstructor
 public class Reporting {
 
+    private final String name;
     private final Map<String, ReportStatus> loans = new HashMap<>();
     private final AtomicInteger missedLoanExtended = new AtomicInteger(0);
     private final AtomicInteger missedBookReturned = new AtomicInteger(0);
+
+    public String name() {
+        return name;
+    }
 
     public int totalLoans() {
         return loans.size();
